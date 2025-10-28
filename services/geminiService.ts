@@ -1,3 +1,4 @@
+
 import { GoogleGenAI } from "@google/genai";
 
 // Ensure the API key is available. In a real-world scenario, you'd have more robust error handling.
@@ -193,10 +194,18 @@ ${rawExperience}
 CRITICAL FINAL INSTRUCTION: Your entire response must be ONLY the raw LaTeX code. The response must start with "\\documentclass" and nothing before it. The response must end with "\\end{document}" and nothing after it.
 `;
 
-const questionAnsweringPrompt = (question: string) => `
-You are an AI career advisor. A user is asking a question related to job applications. Provide a concise, helpful, and professional answer.
+const questionAnsweringPrompt = (question: string, rawExperience: string, jobDescription: string) => `
+You are an expert AI career coach. Your task is to answer the user's question based on the provided resume and the target job description. Provide concise, actionable, and personalized advice. Your answer MUST be between 50 and 100 words.
 
-**Rule:** Your entire response must be 50 words or less.
+[USER'S RESUME]
+---
+${rawExperience}
+---
+
+[TARGET JOB DESCRIPTION]
+---
+${jobDescription}
+---
 
 **Question:** "${question}"
 
@@ -222,11 +231,11 @@ export const generateResume = async (rawExperience: string, jobDescription: stri
   }
 };
 
-export const answerQuestion = async (question: string): Promise<string> => {
+export const answerQuestion = async (question: string, rawExperience: string, jobDescription: string): Promise<string> => {
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
-            contents: questionAnsweringPrompt(question)
+            contents: questionAnsweringPrompt(question, rawExperience, jobDescription)
         });
         return response.text;
     } catch (error) {

@@ -1,3 +1,4 @@
+
 import React, { useState, useCallback } from 'react';
 import { generateResume, answerQuestion } from './services/geminiService';
 import { DEFAULT_GUIDELINES, DEFAULT_JOB_DESC, DEFAULT_RAW_EXP } from './constants';
@@ -97,7 +98,7 @@ export default function App() {
     setError('');
 
     try {
-      const result = await answerQuestion(question);
+      const result = await answerQuestion(question, rawExperience, jobDescription);
       setAnswer(result);
     } catch (err) {
       setError('Failed to get an answer. Please check your API key and try again.');
@@ -105,14 +106,14 @@ export default function App() {
     } finally {
       setIsLoadingAnswer(false);
     }
-  }, [question]);
+  }, [question, rawExperience, jobDescription]);
 
   return (
     <div className="min-h-screen bg-gray-900 text-gray-200 font-sans p-4 sm:p-6 lg:p-8">
       <main className="max-w-7xl mx-auto">
         <header className="text-center mb-10">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500">
-            ATS-Optimized Resume Builder
+            LatexME - ATS-Optimized Resume Builder
           </h1>
           <p className="mt-2 text-lg text-gray-400">Craft the perfect resume with the power of AI</p>
         </header>
@@ -166,14 +167,14 @@ export default function App() {
 
         {/* Q&A Section */}
         <div className="bg-gray-800/50 p-6 rounded-2xl border border-gray-700">
-          <h2 className="text-2xl font-bold text-white mb-4">Quick Career Q&A</h2>
+          <h2 className="text-2xl font-bold text-white mb-4">Resume & Job Q&A</h2>
           <div className="flex flex-col sm:flex-row gap-4 mb-4">
             <input
               type="text"
               value={question}
               onChange={(e) => setQuestion(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAskQuestion()}
-              placeholder="Ask a job-related question (e.g., 'How to prepare for a behavioral interview?')"
+              placeholder="Ask about your resume vs. the job (e.g., 'How can I improve my chances?')"
               className="flex-grow p-3 bg-gray-800 border border-gray-700 rounded-lg text-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-shadow duration-200"
             />
             <button
